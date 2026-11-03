@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Finanças
 
-## Getting Started
+Controle financeiro pessoal com CRUD completo de contas, categorias e transações, e um painel com totais e gráficos.
 
-First, run the development server:
+![Painel com totais, gráficos e últimas transações](docs/screenshots/dashboard.png)
+
+[![CI](https://github.com/SEU-USUARIO/finance-app/actions/workflows/ci.yml/badge.svg)](https://github.com/SEU-USUARIO/finance-app/actions/workflows/ci.yml)
+
+## Funcionalidades
+
+- Contas (corrente, carteira e poupança) com saldo calculado a partir das transações.
+- Categorias de receita e despesa.
+- Transações com filtros por tipo, conta, categoria e período, e paginação de 20 itens. Os filtros ficam na URL.
+- Painel com saldo total, totais do período, despesas por categoria e receitas x despesas dos últimos 6 meses.
+- Exclusão bloqueada quando uma conta ou categoria ainda tem transações, com mensagem clara.
+
+## Stack
+
+| Área        | Escolha                                                      | Motivo                                                          |
+| ----------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
+| Framework   | Next.js (App Router) + TypeScript                            | Front e servidor no mesmo projeto, com tipagem ponta a ponta    |
+| Banco e ORM | PostgreSQL + Prisma                                          | Integridade referencial real e consultas tipadas                |
+| Validação   | Zod                                                          | Uma única regra de validação, usada no servidor e no formulário |
+| Formulários | react-hook-form                                              | Estado de formulário leve, com validação pelo Zod               |
+| UI          | Tailwind CSS + shadcn/ui                                     | Componentes acessíveis que ficam no próprio repositório         |
+| Gráficos    | Recharts                                                     | Biblioteca madura para gráficos em React                        |
+| Testes      | Vitest (unitários e integração) + Playwright (ponta a ponta) | Integração roda no banco real, sem mock do Prisma               |
+| CI          | GitHub Actions                                               | Lint, tipos e testes a cada push                                |
+
+Valores são guardados em centavos (`Int`), para evitar erro de ponto flutuante.
+
+## Como rodar
+
+Pré-requisitos: Node.js 22 e Docker.
 
 ```bash
+npm install
+cp .env.example .env
+docker compose up -d
+npx prisma migrate deploy
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000). O seed cria seis meses de dados de exemplo.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# unitários e de integração (usa o banco finance_test)
+npm test
 
-## Learn More
+# ponta a ponta (usa o banco finance_test_e2e, que é limpo antes da execução)
+TEST_DATABASE_URL=postgresql://finance:finance@localhost:5432/finance_test_e2e npm run test:e2e
+```
 
-To learn more about Next.js, take a look at the following resources:
+Antes do primeiro teste, aplique as migrações nos dois bancos de teste:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run db:test:migrate
+TEST_DATABASE_URL=postgresql://finance:finance@localhost:5432/finance_test_e2e npm run db:test:migrate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Decisões de design
 
-## Deploy on Vercel
+A especificação e o plano de implementação estão em `docs/superpowers/`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Spec de design](docs/superpowers/specs/2026-11-02-finance-app-design.md)
+- [Plano da fase 1](docs/superpowers/plans/2026-11-02-finance-app-phase1.md)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Estrutura
+
+```
+src/
+├── app/                 # rotas do Next.js; só monta as páginas
+├── features/            # um diretório por domínio: accounts, categories, transactions, dashboard
+│   └── <feature>/       # actions.ts, queries.ts, schemas.ts, components/
+├── components/ui/       # primitivos do shadcn/ui
+└── lib/                 # banco, valores em R$ e tipos compartilhados
+```

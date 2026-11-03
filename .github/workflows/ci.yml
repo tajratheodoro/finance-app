@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint, typecheck, tests, and e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      TEST_DATABASE_URL: postgresql://finance:finance@localhost:5432/finance_test
+      DATABASE_URL: postgresql://finance:finance@localhost:5432/finance_test
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: finance
+          POSTGRES_PASSWORD: finance
+          POSTGRES_DB: finance_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U finance -d finance_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Migrate test database
+        run: npm run db:test:migrate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Create E2E database
+        run: PGPASSWORD=finance psql -h localhost -U finance -d finance_test -c "CREATE DATABASE finance_test_e2e;"
+
+      - name: Migrate E2E database
+        run: npm run db:test:migrate
+        env:
+          TEST_DATABASE_URL: postgresql://finance:finance@localhost:5432/finance_test_e2e
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npm run test:e2e
+        env:
+          TEST_DATABASE_URL: postgresql://finance:finance@localhost:5432/finance_test_e2e
