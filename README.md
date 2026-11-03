@@ -4,7 +4,7 @@ Controle financeiro pessoal com CRUD completo de contas, categorias e transaçõ
 
 ![Painel com totais, gráficos e últimas transações](docs/screenshots/dashboard.png)
 
-[![CI](https://github.com/SEU-USUARIO/finance-app/actions/workflows/ci.yml/badge.svg)](https://github.com/SEU-USUARIO/finance-app/actions/workflows/ci.yml)
+[![CI](https://github.com/tajratheodoro/finance-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tajratheodoro/finance-app/actions/workflows/ci.yml)
 
 ## Funcionalidades
 
