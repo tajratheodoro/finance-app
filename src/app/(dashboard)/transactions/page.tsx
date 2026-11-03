@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { connection } from 'next/server'
 import { buttonVariants } from '@/components/ui/button'
@@ -33,7 +34,24 @@ function pageHref(params: SearchParams, page: number): string {
   return `/transactions?${search}`
 }
 
-export default async function TransactionsPage({
+// Filters come from the URL and the lists come from the database, so the whole content streams inside Suspense.
+export default function TransactionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}) {
+  return (
+    <Suspense
+      fallback={
+        <p className="text-sm text-muted-foreground">Carregando transações…</p>
+      }
+    >
+      <TransactionsContent searchParams={searchParams} />
+    </Suspense>
+  )
+}
+
+async function TransactionsContent({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>
