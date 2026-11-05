@@ -24,6 +24,7 @@ describe('accounts', () => {
     const result = await createAccount({
       name: 'Nubank',
       type: 'CHECKING',
+      institution: ' Nubank ',
       initialBalance: '1000,00',
     })
 
@@ -33,6 +34,7 @@ describe('accounts', () => {
     expect(account).toMatchObject({
       name: 'Nubank',
       type: 'CHECKING',
+      institution: 'Nubank',
       initialBalanceCents: 100000,
     })
     expect(revalidatePath).toHaveBeenCalledWith('/accounts')
@@ -48,14 +50,15 @@ describe('accounts', () => {
     expect(await db.account.count()).toBe(0)
   })
 
-  it('updateAccount changes the name and balance', async () => {
+  it('updateAccount changes the name and balance, and clears an empty institution', async () => {
     const account = await db.account.create({
-      data: { name: 'Nubank', type: 'CHECKING' },
+      data: { name: 'Nubank', type: 'CHECKING', institution: 'Nubank' },
     })
 
     const result = await updateAccount(account.id, {
       name: 'Carteira',
       type: 'WALLET',
+      institution: '',
       initialBalance: '50,00',
     })
 
@@ -65,6 +68,7 @@ describe('accounts', () => {
     ).toMatchObject({
       name: 'Carteira',
       type: 'WALLET',
+      institution: null,
       initialBalanceCents: 5000,
     })
   })
@@ -83,7 +87,12 @@ describe('accounts', () => {
 
   it('listAccounts returns the initial balance plus income minus expense', async () => {
     const account = await db.account.create({
-      data: { name: 'Nubank', type: 'CHECKING', initialBalanceCents: 100000 },
+      data: {
+        name: 'Nubank',
+        type: 'CHECKING',
+        institution: 'Nubank',
+        initialBalanceCents: 100000,
+      },
     })
     const income = await db.category.create({
       data: { name: 'Salário', type: 'INCOME', color: '#00ff00' },
@@ -117,6 +126,7 @@ describe('accounts', () => {
         id: account.id,
         name: 'Nubank',
         type: 'CHECKING',
+        institution: 'Nubank',
         initialBalanceCents: 100000,
         balanceCents: 130000,
       },

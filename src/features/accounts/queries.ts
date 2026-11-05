@@ -5,6 +5,7 @@ export type AccountWithBalance = {
   id: string
   name: string
   type: AccountType
+  institution: string | null
   initialBalanceCents: number
   balanceCents: number
 }
@@ -13,7 +14,13 @@ export async function listAccounts(): Promise<AccountWithBalance[]> {
   const [accounts, totals] = await Promise.all([
     db.account.findMany({
       orderBy: { name: 'asc' },
-      select: { id: true, name: true, type: true, initialBalanceCents: true },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        institution: true,
+        initialBalanceCents: true,
+      },
     }),
     db.transaction.groupBy({
       by: ['accountId', 'type'],
@@ -33,6 +40,7 @@ export async function listAccounts(): Promise<AccountWithBalance[]> {
     id: account.id,
     name: account.name,
     type: account.type,
+    institution: account.institution,
     initialBalanceCents: account.initialBalanceCents,
     balanceCents: account.initialBalanceCents + (movement.get(account.id) ?? 0),
   }))
