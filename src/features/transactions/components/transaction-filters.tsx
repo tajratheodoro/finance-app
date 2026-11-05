@@ -4,16 +4,20 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 import { ItemSelect } from './transaction-form'
 
 type Option = { id: string; name: string }
 type Category = Option & { type: 'INCOME' | 'EXPENSE' }
 
 const TYPE_ITEMS = [
-  { value: '', label: 'Todos os tipos' },
+  { value: '', label: 'Todos' },
   { value: 'INCOME', label: 'Receita' },
   { value: 'EXPENSE', label: 'Despesa' },
 ]
+
+const FIELD = 'flex min-w-0 flex-col gap-1'
+const LABEL = 'text-xs text-muted-foreground'
 
 export function TransactionFilters({
   accounts,
@@ -57,21 +61,42 @@ export function TransactionFilters({
   ]
 
   return (
-    <section aria-label="Filtros" className="flex flex-col gap-3">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-type">Tipo</Label>
-          <ItemSelect
-            id="filter-type"
-            items={TYPE_ITEMS}
-            value={type}
-            // A category of the other type would match nothing, so it is cleared.
-            onChange={(next) => update({ type: next, categoryId: '' })}
-          />
-        </div>
+    <section
+      aria-label="Filtros"
+      className="flex flex-col gap-4 rounded-3xl bg-card p-4"
+    >
+      <div
+        role="group"
+        aria-label="Tipo"
+        className="grid grid-cols-3 gap-1 rounded-full bg-secondary p-1 sm:w-fit"
+      >
+        {TYPE_ITEMS.map((item) => {
+          const active = item.value === type
+          return (
+            <button
+              key={item.value}
+              type="button"
+              aria-pressed={active}
+              // A category of the other type would match nothing, so it is cleared.
+              onClick={() => update({ type: item.value, categoryId: '' })}
+              className={cn(
+                'min-h-11 rounded-full px-5 text-sm font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:min-h-9',
+                active
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-secondary-foreground hover:bg-accent',
+              )}
+            >
+              {item.label}
+            </button>
+          )
+        })}
+      </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-account">Conta</Label>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className={FIELD}>
+          <Label htmlFor="filter-account" className={LABEL}>
+            Conta
+          </Label>
           <ItemSelect
             id="filter-account"
             items={accountItems}
@@ -80,8 +105,10 @@ export function TransactionFilters({
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-category">Categoria</Label>
+        <div className={FIELD}>
+          <Label htmlFor="filter-category" className={LABEL}>
+            Categoria
+          </Label>
           <ItemSelect
             id="filter-category"
             items={categoryItems}
@@ -90,21 +117,27 @@ export function TransactionFilters({
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-from">De</Label>
+        <div className={FIELD}>
+          <Label htmlFor="filter-from" className={LABEL}>
+            De
+          </Label>
           <Input
             id="filter-from"
             type="date"
+            className="min-h-11 min-w-0 rounded-full sm:min-h-8"
             value={from}
             onChange={(event) => update({ from: event.target.value })}
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-to">Até</Label>
+        <div className={FIELD}>
+          <Label htmlFor="filter-to" className={LABEL}>
+            Até
+          </Label>
           <Input
             id="filter-to"
             type="date"
+            className="min-h-11 min-w-0 rounded-full sm:min-h-8"
             value={to}
             onChange={(event) => update({ to: event.target.value })}
           />
@@ -116,6 +149,7 @@ export function TransactionFilters({
           <Button
             variant="ghost"
             size="sm"
+            className="min-h-11 rounded-full sm:min-h-8"
             onClick={() =>
               update({
                 type: '',
