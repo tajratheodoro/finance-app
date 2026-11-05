@@ -18,10 +18,30 @@ enum TransactionType {
   EXPENSE
 }
 
+enum InvestmentKind {
+  FIXED_INCOME
+  STOCK
+  FUND
+  CRYPTO
+  OTHER
+}
+
+model Investment {
+  id                String           @id @default(cuid())
+  name              String
+  kind              InvestmentKind
+  institution       String?
+  investedCents     Int
+  currentValueCents Int
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
 model Account {
   id                  String        @id @default(cuid())
   name                String
   type                AccountType
+  institution         String?
   initialBalanceCents Int           @default(0)
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt

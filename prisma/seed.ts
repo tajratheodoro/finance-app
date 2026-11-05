@@ -9,13 +9,23 @@ export async function seed() {
   await db.account.deleteMany()
 
   const nubank = await db.account.create({
-    data: { name: 'Nubank', type: 'CHECKING', initialBalanceCents: 150000 },
+    data: {
+      name: 'Nubank',
+      type: 'CHECKING',
+      institution: 'Nubank',
+      initialBalanceCents: 150000,
+    },
   })
   const wallet = await db.account.create({
     data: { name: 'Carteira', type: 'WALLET', initialBalanceCents: 20000 },
   })
   await db.account.create({
-    data: { name: 'Poupança', type: 'SAVINGS', initialBalanceCents: 500000 },
+    data: {
+      name: 'Poupança',
+      type: 'SAVINGS',
+      institution: 'Caixa',
+      initialBalanceCents: 500000,
+    },
   })
 
   const salary = await db.category.create({
