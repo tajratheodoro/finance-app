@@ -45,7 +45,13 @@ export function DeleteAccountButton({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
-        render={<Button variant="destructive" size="sm" />}
+        render={
+          <Button
+            variant="destructive"
+            size="sm"
+            className="h-11 rounded-full px-4 sm:h-8"
+          />
+        }
         aria-label={`Excluir ${name}`}
       >
         Excluir

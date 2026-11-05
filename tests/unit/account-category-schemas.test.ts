@@ -23,6 +23,27 @@ describe('accountSchema', () => {
     expect(result.initialBalanceCents).toBe(0)
   })
 
+  it('trims the institution', () => {
+    const result = accountSchema.parse({
+      name: 'Nubank',
+      type: 'CHECKING',
+      institution: '  Nubank ',
+    })
+    expect(result.institution).toBe('Nubank')
+  })
+
+  it.each([undefined, '', '   '])(
+    'stores a missing institution %j as null',
+    (institution) => {
+      const result = accountSchema.parse({
+        name: 'Carteira',
+        type: 'WALLET',
+        institution,
+      })
+      expect(result.institution).toBeNull()
+    },
+  )
+
   it('reports an unparseable initial balance on its own field', () => {
     const result = accountSchema.safeParse({
       name: 'Poupança',

@@ -8,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { listAccounts } from '@/features/accounts/queries'
+import { BalanceHero } from '@/features/dashboard/components/balance-hero'
 import { ExpensesByCategoryChart } from '@/features/dashboard/components/expenses-by-category-chart'
 import { MonthlyChart } from '@/features/dashboard/components/monthly-chart'
 import { PeriodPicker } from '@/features/dashboard/components/period-picker'
@@ -31,10 +33,11 @@ export default async function DashboardPage({
   const { month } = await searchParams
   const period = parsePeriod(month)
 
-  const [recent, totalBalanceCents, summary, expenses, monthly] =
+  const [recent, totalBalanceCents, accounts, summary, expenses, monthly] =
     await Promise.all([
       getRecentTransactions(5),
       getTotalBalance(),
+      listAccounts(),
       getPeriodSummary(period),
       getExpensesByCategory(period),
       getMonthlySeries(period),
@@ -44,7 +47,7 @@ export default async function DashboardPage({
     return (
       <div className="flex flex-col gap-6">
         <h1 className="text-2xl font-semibold">Painel</h1>
-        <Card>
+        <Card className="max-w-xl rounded-3xl">
           <CardHeader>
             <CardTitle>Nenhuma transação ainda</CardTitle>
             <CardDescription>
@@ -52,7 +55,11 @@ export default async function DashboardPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button nativeButton={false} render={<Link href="/transactions" />}>
+            <Button
+              className="h-11 rounded-full px-5"
+              nativeButton={false}
+              render={<Link href="/transactions" />}
+            >
               Adicionar primeira transação
             </Button>
           </CardContent>
@@ -67,21 +74,25 @@ export default async function DashboardPage({
   )
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">Painel</h1>
-        <PeriodPicker key={pickerValue} value={pickerValue} />
+    <div className="flex flex-col gap-8">
+      <h1 className="text-2xl font-semibold">Painel</h1>
+
+      <BalanceHero totalBalanceCents={totalBalanceCents} accounts={accounts} />
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">Período</h2>
+          <PeriodPicker key={pickerValue} value={pickerValue} />
+        </div>
+        <SummaryCards
+          incomeCents={summary.incomeCents}
+          expenseCents={summary.expenseCents}
+          balanceCents={summary.balanceCents}
+        />
       </div>
 
-      <SummaryCards
-        totalBalanceCents={totalBalanceCents}
-        incomeCents={summary.incomeCents}
-        expenseCents={summary.expenseCents}
-        balanceCents={summary.balanceCents}
-      />
-
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
+        <Card className="rounded-3xl">
           <CardHeader>
             <CardTitle>Despesas por categoria</CardTitle>
           </CardHeader>
@@ -94,9 +105,9 @@ export default async function DashboardPage({
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-3xl">
           <CardHeader>
-            <CardTitle>Receitas x despesas nos últimos 6 meses</CardTitle>
+            <CardTitle>Receitas e despesas, últimos 6 meses</CardTitle>
           </CardHeader>
           <CardContent>
             {hasMonthlyData ? (

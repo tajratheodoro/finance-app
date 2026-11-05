@@ -3,6 +3,7 @@
 import { useId, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -55,13 +56,19 @@ export function CategoryForm({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button
-            variant={isEdit ? 'outline' : 'default'}
-            size={isEdit ? 'sm' : 'default'}
-          />
+          category ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-11"
+              aria-label={`Editar ${category.name}`}
+            />
+          ) : (
+            <Button className="h-11 rounded-full px-5" />
+          )
         }
       >
-        {isEdit ? 'Editar' : 'Nova categoria'}
+        {category ? <Pencil /> : 'Nova categoria'}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -132,6 +139,7 @@ function CategoryFormBody({
         <Label htmlFor={`${id}-name`}>Nome</Label>
         <Input
           id={`${id}-name`}
+          className="h-11"
           aria-invalid={!!errors.name}
           aria-describedby={errors.name ? `${id}-name-error` : undefined}
           {...register('name')}
@@ -162,7 +170,7 @@ function CategoryFormBody({
                 id={`${id}-type`}
                 aria-invalid={!!errors.type}
                 aria-describedby={typeLocked ? `${id}-type-hint` : undefined}
-                className="w-full"
+                className="h-11 w-full"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -193,7 +201,7 @@ function CategoryFormBody({
         <Input
           id={`${id}-color`}
           type="color"
-          className="h-8 w-16 p-1"
+          className="h-11 w-16 p-1"
           aria-invalid={!!errors.color}
           aria-describedby={errors.color ? `${id}-color-error` : undefined}
           {...register('color')}
@@ -206,10 +214,10 @@ function CategoryFormBody({
       </div>
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <DialogClose render={<Button variant="outline" />}>
+        <DialogClose render={<Button variant="outline" className="h-11" />}>
           Cancelar
         </DialogClose>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" className="h-11" disabled={isSubmitting}>
           {isSubmitting ? 'Salvando...' : 'Salvar'}
         </Button>
       </div>

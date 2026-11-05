@@ -106,7 +106,7 @@ export function ItemSelect({
         id={id}
         aria-invalid={invalid}
         aria-describedby={describedBy}
-        className="w-full"
+        className="min-h-11 w-full rounded-full sm:min-h-8"
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -223,13 +223,14 @@ function TransactionForm({
           <FieldError id="type-error" message={errors.type?.message} />
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 sm:col-span-2">
           <Label htmlFor="amount">Valor (R$)</Label>
           <Input
             id="amount"
             inputMode="decimal"
             placeholder="0,00"
             autoComplete="off"
+            className="h-14 rounded-2xl text-2xl font-semibold tabular-nums md:text-2xl"
             aria-invalid={!!errors.amount}
             aria-describedby={errors.amount ? 'amount-error' : undefined}
             {...register('amount')}
@@ -303,10 +304,18 @@ function TransactionForm({
       )}
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <DialogClose render={<Button variant="outline" />}>
+        <DialogClose
+          render={
+            <Button variant="outline" className="min-h-11 rounded-full" />
+          }
+        >
           Cancelar
         </DialogClose>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="min-h-11 rounded-full"
+        >
           {isSubmitting ? 'Salvando...' : 'Salvar'}
         </Button>
       </div>
@@ -323,7 +332,15 @@ export function TransactionFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant={variant} size="sm" />}>
+      <DialogTrigger
+        render={
+          <Button
+            variant={variant}
+            size="sm"
+            className="min-h-11 rounded-full px-4 sm:min-h-8"
+          />
+        }
+      >
         {label}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

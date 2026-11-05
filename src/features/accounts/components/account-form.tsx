@@ -31,6 +31,7 @@ type Account = {
   id: string
   name: string
   type: AccountInput['type']
+  institution: string | null
   initialBalanceCents: number
 }
 
@@ -46,7 +47,13 @@ export function AccountFormDialog({ account }: { account?: Account }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={<Button variant={account ? 'outline' : 'default'} size="sm" />}
+        render={
+          <Button
+            variant={account ? 'outline' : 'default'}
+            size="sm"
+            className="h-11 rounded-full px-4 sm:h-8"
+          />
+        }
         aria-label={account ? `Editar ${account.name}` : undefined}
       >
         {account ? 'Editar' : 'Nova conta'}
@@ -83,10 +90,12 @@ function AccountForm({
     setError: setFieldError,
     formState: { errors },
   } = useForm<AccountInput>({
-    resolver: zodResolver(accountSchema),
+    // raw: the server action parses again, so it must get the typed strings, not the cents.
+    resolver: zodResolver(accountSchema, undefined, { raw: true }),
     defaultValues: {
       name: account?.name ?? '',
       type: account?.type,
+      institution: account?.institution ?? '',
       initialBalance: account ? centsToInput(account.initialBalanceCents) : '0',
     },
   })
@@ -165,6 +174,23 @@ function AccountForm({
             {errors.type.message}
           </p>
         )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="account-institution">Instituição (opcional)</Label>
+        <Input
+          id="account-institution"
+          placeholder="Nubank, Caixa…"
+          autoComplete="off"
+          aria-describedby="account-institution-hint"
+          {...register('institution')}
+        />
+        <p
+          id="account-institution-hint"
+          className="text-sm text-muted-foreground"
+        >
+          Dá o visual do cartão do banco.
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">

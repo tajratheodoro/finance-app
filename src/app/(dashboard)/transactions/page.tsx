@@ -81,7 +81,7 @@ async function TransactionsContent({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Transações</h1>
+          <h1 className="text-3xl font-semibold">Transações</h1>
           <p className="text-sm text-muted-foreground">
             {total} {total === 1 ? 'transação' : 'transações'}
           </p>
@@ -115,6 +115,7 @@ async function TransactionsContent({
                 href={pageHref(params, page - 1)}
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'sm' }),
+                  'min-h-11 rounded-full px-5',
                 )}
               >
                 Anterior
@@ -125,6 +126,7 @@ async function TransactionsContent({
                 href={pageHref(params, page + 1)}
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'sm' }),
+                  'min-h-11 rounded-full px-5',
                 )}
               >
                 Próxima

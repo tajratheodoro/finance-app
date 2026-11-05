@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -44,10 +45,15 @@ export function DeleteCategoryButton({ id, name }: DeleteCategoryButtonProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
-          <Button variant="ghost" size="sm" className="text-destructive" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-11 text-destructive"
+            aria-label={`Excluir ${name}`}
+          />
         }
       >
-        Excluir
+        <Trash2 />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -63,11 +69,12 @@ export function DeleteCategoryButton({ id, name }: DeleteCategoryButtonProps) {
           </p>
         )}
         <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>
+          <DialogClose render={<Button variant="outline" className="h-11" />}>
             Cancelar
           </DialogClose>
           <Button
             variant="destructive"
+            className="h-11"
             onClick={handleDelete}
             disabled={isPending}
           >

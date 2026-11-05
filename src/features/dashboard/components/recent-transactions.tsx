@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import type { getRecentTransactions } from '@/features/dashboard/queries'
 import { formatBrl } from '@/lib/money'
+import { cn } from '@/lib/utils'
 
 type RecentTransaction = Awaited<
   ReturnType<typeof getRecentTransactions>
@@ -20,13 +21,13 @@ export function RecentTransactions({
   transactions: RecentTransaction[]
 }) {
   return (
-    <Card>
+    <Card className="rounded-3xl">
       <CardHeader>
         <CardTitle>Últimas transações</CardTitle>
         <CardAction>
           <Button
             variant="ghost"
-            size="sm"
+            className="h-11 rounded-full px-4"
             nativeButton={false}
             render={<Link href="/transactions" />}
           >
@@ -46,16 +47,25 @@ export function RecentTransactions({
                   {transaction.description}
                 </p>
                 <div className="flex gap-2 text-sm text-muted-foreground">
-                  <span>{transaction.category.name}</span>
+                  <span className="truncate">{transaction.category.name}</span>
                   <time dateTime={transaction.date.toISOString()}>
                     {transaction.date.toLocaleDateString('pt-BR', {
                       timeZone: 'UTC',
+                      day: '2-digit',
+                      month: 'short',
                     })}
                   </time>
                 </div>
               </div>
-              <p className="shrink-0 font-medium tabular-nums">
-                {transaction.type === 'INCOME' ? '+' : '-'}
+              <p
+                className={cn(
+                  'shrink-0 font-semibold tabular-nums',
+                  transaction.type === 'INCOME'
+                    ? 'text-income'
+                    : 'text-foreground',
+                )}
+              >
+                {transaction.type === 'INCOME' ? '+' : '−'}
                 {formatBrl(transaction.amountCents)}
               </p>
             </li>

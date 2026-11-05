@@ -1,15 +1,18 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+// Xmind (Google Fonts, OFL), self-hosted so the app does not fetch fonts at runtime.
+const xmind = localFont({
+  variable: '--font-xmind',
+  display: 'swap',
+  src: [
+    { path: './fonts/Xmind-400.ttf', weight: '400', style: 'normal' },
+    { path: './fonts/Xmind-500.ttf', weight: '500', style: 'normal' },
+    { path: './fonts/Xmind-600.ttf', weight: '600', style: 'normal' },
+    { path: './fonts/Xmind-700.ttf', weight: '700', style: 'normal' },
+  ],
 })
 
 export const metadata: Metadata = {
@@ -25,10 +28,11 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${xmind.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        {children}
+      <body className="flex min-h-full flex-col">
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   )

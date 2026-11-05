@@ -7,6 +7,12 @@ export const accountSchema = z
     type: z.enum(['CHECKING', 'WALLET', 'SAVINGS'], {
       error: 'Escolha um tipo.',
     }),
+    // Blank means "no bank": stored as null so the card falls back to the palette.
+    institution: z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) => value || null),
     initialBalance: z.string().default('0'),
   })
   .transform((data, ctx) => {
@@ -22,7 +28,12 @@ export const accountSchema = z
       })
       return z.NEVER
     }
-    return { name: data.name, type: data.type, initialBalanceCents }
+    return {
+      name: data.name,
+      type: data.type,
+      institution: data.institution,
+      initialBalanceCents,
+    }
   })
 
 export type AccountInput = z.input<typeof accountSchema>
