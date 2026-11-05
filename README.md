@@ -1,6 +1,6 @@
 # Finanças
 
-Controle financeiro pessoal com CRUD completo de contas, categorias e transações, e um painel com totais e gráficos.
+Controle financeiro pessoal com CRUD completo de contas, categorias e transações, um painel com totais e gráficos, registro de gastos e depósitos por uma calculadora própria, e uma aba de investimentos. Tem tema claro e escuro, feito com uma paleta de seis cores.
 
 ![Painel com totais, gráficos e últimas transações](docs/screenshots/dashboard.png)
 
@@ -13,6 +13,10 @@ Controle financeiro pessoal com CRUD completo de contas, categorias e transaçõ
 - Transações com filtros por tipo, conta, categoria e período, e paginação de 20 itens. Os filtros ficam na URL.
 - Painel com saldo total, totais do período, despesas por categoria e receitas x despesas dos últimos 6 meses.
 - Exclusão bloqueada quando uma conta ou categoria ainda tem transações, com mensagem clara.
+- Cartões de conta com a aparência da instituição (quando informada) e um seletor de conta.
+- Registro pela calculadora: gasto, receita ou depósito, com expressão (por exemplo, `75 + 50`) e valor em centavos.
+- Investimentos: aplicações por tipo (renda fixa, ações, fundos, cripto e outros), com total investido, valor atual, rentabilidade e distribuição em gráfico.
+- Tema claro e escuro, layout responsivo (celular, tablet e desktop) e animações só onde ajudam a entender a tela, sem nada que se mova sozinho.
 
 ## Stack
 
@@ -23,6 +27,8 @@ Controle financeiro pessoal com CRUD completo de contas, categorias e transaçõ
 | Validação   | Zod                                                          | Uma única regra de validação, usada no servidor e no formulário |
 | Formulários | react-hook-form                                              | Estado de formulário leve, com validação pelo Zod               |
 | UI          | Tailwind CSS + shadcn/ui                                     | Componentes acessíveis que ficam no próprio repositório         |
+| Tipografia  | Xmind (Google Fonts), servida localmente                     | Fonte única, sem buscar arquivos externos em tempo de execução  |
+| Tema        | next-themes                                                  | Tema claro e escuro sem piscar a tela ao carregar               |
 | Gráficos    | Recharts                                                     | Biblioteca madura para gráficos em React                        |
 | Testes      | Vitest (unitários e integração) + Playwright (ponta a ponta) | Integração roda no banco real, sem mock do Prisma               |
 | CI          | GitHub Actions                                               | Lint, tipos e testes a cada push                                |
